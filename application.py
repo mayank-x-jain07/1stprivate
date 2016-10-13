@@ -18,6 +18,7 @@ import time
 import random
 #import memcache
 import sys
+from flask import request, jsonify
 
 
 application = Flask(__name__)
@@ -109,6 +110,159 @@ def main1():
                            title='results',
                            my_res=my_res)
 
+
+
+
+@application.route('/select_queries', methods= ['GET', 'POST'])
+# Configure the Jinja2 environment.
+def queries_1000():
+    print "mj entered queries_1000"
+    my_res=[]
+    #name=requ
+    #contaendquest.form['contact']
+
+
+    #print "fetching records from My SQL"
+    #print "mj updated"
+    #print "name= ",name
+    #print "contact=",contact
+    platform=os.environ['os_platform']
+    print platform
+    if platform=='aws':
+
+        connection = mdb.connect(os.environ['db_host'], os.environ['db_user'], os.environ['db_password'], os.environ['db_name'])
+        db = MySQLdb.connect(host=os.environ['db_host'], port=3306, db=os.environ['db_name'], user=os.environ['db_user'], passwd=os.environ['db_password'])
+    elif platform=='aws-db-on-heroku':
+
+        connection = mdb.connect(os.environ['db_host'], os.environ['db_user'], os.environ['db_password'], os.environ['db_name'])
+        db = MySQLdb.connect(host=os.environ['db_host'], port=3306, db=os.environ['db_name'], user=os.environ['db_user'], passwd=os.environ['db_password'])
+    
+    else:
+        #os_db_url=os.environ['CLEARDB_DATABASE_URL']
+        print "in heroku db environment"
+        url = make_url("mysql://b799d35b9d19e6:ca1bbbea@us-cdbr-iron-east-04.cleardb.net/heroku_655636584c02459?reconnect=true")
+        #url = make_url(os_db_url)
+        #print "url : "+url
+        print url.username, url.password, url.host, url.port, url.database
+        connection = mdb.connect(url.host, url.username, url.password, url.database)
+        db = MySQLdb.connect(host=url.host, port=3306, db=url.database, user=url.username, passwd=url.password)
+    
+
+    cursor = connection.cursor()
+    query_res={}
+   
+    ##100 Queries 
+    start_time = datetime.now()
+    query_res['q_100_start_time']=str(start_time)
+    count=1
+    while count <2:
+        cursor.execute("select * from   Customer where name='shraddha'")
+        count=count+1
+    res=cursor.fetchall()
+    end_time = datetime.now()
+    q_100_total_execution_time= end_time - start_time
+    query_res['q_100_total_execution_time']=str(q_100_total_execution_time)
+    query_res['q_100_count']=str(count)
+
+    #print "After Queries  Result = : ", res
+    query_res['res']=str(res)
+
+    my_res=query_res
+    print "my res before return ",my_res
+
+    return jsonify(query_res)
+
+@application.route('/insert_queries', methods= ['GET', 'POST'])
+# Configure the Jinja2 environment.
+def insert_queries():
+    print "mj entered insert_queries"
+    my_res=[]
+    platform=os.environ['os_platform']
+    print platform
+    if platform=='aws':
+
+        connection = mdb.connect(os.environ['db_host'], os.environ['db_user'], os.environ['db_password'], os.environ['db_name'])
+        db = MySQLdb.connect(host=os.environ['db_host'], port=3306, db=os.environ['db_name'], user=os.environ['db_user'], passwd=os.environ['db_password'])
+    elif platform=='aws-db-on-heroku':
+
+        connection = mdb.connect(os.environ['db_host'], os.environ['db_user'], os.environ['db_password'], os.environ['db_name'])
+        db = MySQLdb.connect(host=os.environ['db_host'], port=3306, db=os.environ['db_name'], user=os.environ['db_user'], passwd=os.environ['db_password'])
+    
+    else:
+        #os_db_url=os.environ['CLEARDB_DATABASE_URL']
+        print "in heroku db environment"
+        url = make_url("mysql://b799d35b9d19e6:ca1bbbea@us-cdbr-iron-east-04.cleardb.net/heroku_655636584c02459?reconnect=true")
+        #url = make_url(os_db_url)
+        #print "url : "+url
+        print url.username, url.password, url.host, url.port, url.database
+        connection = mdb.connect(url.host, url.username, url.password, url.database)
+        db = MySQLdb.connect(host=url.host, port=3306, db=url.database, user=url.username, passwd=url.password)
+    
+
+    cursor = connection.cursor()
+    query_res={}
+   
+    ##100 Queries 
+    name='mayank-sj'
+    contact='123456789'
+    cursor.execute('insert into Customer (Name,Contact_Number) values(%s,%s)',(name,contact))
+    connection.commit();
+    query_res['message']='inserted';
+    my_res=query_res
+    print "my res before return ",my_res
+
+    return jsonify(query_res)
+
+
+
+@application.route('/update_query', methods= ['GET', 'POST'])
+# Configure the Jinja2 environment.
+def update_query():
+    print "mj entered update_query"
+    my_res=[]
+    platform=os.environ['os_platform']
+    print platform
+    if platform=='aws':
+
+        connection = mdb.connect(os.environ['db_host'], os.environ['db_user'], os.environ['db_password'], os.environ['db_name'])
+        db = MySQLdb.connect(host=os.environ['db_host'], port=3306, db=os.environ['db_name'], user=os.environ['db_user'], passwd=os.environ['db_password'])
+    elif platform=='aws-db-on-heroku':
+
+        connection = mdb.connect(os.environ['db_host'], os.environ['db_user'], os.environ['db_password'], os.environ['db_name'])
+        db = MySQLdb.connect(host=os.environ['db_host'], port=3306, db=os.environ['db_name'], user=os.environ['db_user'], passwd=os.environ['db_password'])
+    
+    else:
+        #os_db_url=os.environ['CLEARDB_DATABASE_URL']
+        print "in heroku db environment"
+        url = make_url("mysql://b799d35b9d19e6:ca1bbbea@us-cdbr-iron-east-04.cleardb.net/heroku_655636584c02459?reconnect=true")
+        #url = make_url(os_db_url)
+        #print "url : "+url
+        print url.username, url.password, url.host, url.port, url.database
+        connection = mdb.connect(url.host, url.username, url.password, url.database)
+        db = MySQLdb.connect(host=url.host, port=3306, db=url.database, user=url.username, passwd=url.password)
+    
+
+    cursor = connection.cursor()
+    query_res={}
+   
+    ##100 Queries 
+    name='mayank-sj'
+    contact='123456789'
+    query="update Customer SET Name='Mayank' WHERE Name='Mayank'"
+    #print "update query daily: ",query
+
+    cursor.execute(query)
+    #cursor.execute('insert into Customer (Name,Contact_Number) values(%s,%s)',(name,contact))
+    connection.commit();
+    #query_res['message']='inserted';
+    query_res['message']='updated';
+    my_res=query_res
+    print "my res before return ",my_res
+
+    return jsonify(query_res)
+
+
+
 @application.route('/cartype', methods= ['GET', 'POST'])
 # Configure the Jinja2 environment.
 def c_type():
@@ -117,39 +271,6 @@ def c_type():
                            title='Car Type',
                            my_res="mj")
 
-@application.route('/type', methods= ['GET', 'POST'])
-# Configure the Jinja2 environment.
-def car_type():
-    print "mj entered car type"
-    my_res=[]
-    operation=request.form['operation']
-    print "operation ",operation
-
-    daily_rate=int(request.form['daily_rate'])
-    print "daily rate",daily_rate
-    weekly_rate=int(request.form['weekly_rate'])
-    print "weekly_rate",weekly_rate
-    c_type=str(request.form['type'])
-    print "Car type",c_type
-
-    db = MySQLdb.connect(host='mj1.ccunictkoaw7.us-west-2.rds.amazonaws.com', port=3306, db='mayankdb', user='mayank', passwd='mayank123')
-    cursor = db.cursor()
-    if operation=='new':
-
-        cursor.execute('insert into Vehicle_Type (Type,Daily_Rate,Weekly_Rate) values(%s,%s,%s)',(c_type,daily_rate,weekly_rate))
-        db.commit();
-
-    else:
-        cursor.execute("Update Vehicle_Type set Daily_Rate= %s , Weekly_Rate= %s where Type= '%s' " % (daily_rate,weekly_rate,c_type))
-        db.commit();
-
-
-    return render_template('type_results.html',
-                           title='results',
-                           my_res=my_res)
-
-
-    #user = {'nickname': 'Miguel'}  # fake user
 
 @application.route('/car', methods= ['GET', 'POST'])
 # Configure the Jinja2 environment.
@@ -163,7 +284,7 @@ def car_template():
 # Configure the Jinja2 environment.
 def car():
     print "mj entered new car"
-    my_res=[]
+    #my_res=[]
     operation=request.form['operation']
     print "operation ",operation
 
@@ -296,4 +417,4 @@ def main_main():
 # run the app.
 if __name__ == "__main__":
     application.debug = True
-    application.run()
+    application.run(threaded=True)
